@@ -1,18 +1,15 @@
 # Storage Manager 
 
 ### Current Questions - 25/08
-1. handling of pages -  like when inserting a row in a table, first checking current page is full or not sufficient page then we need to get the new page from the free pages. If row length is more than page then 
-2. What are the disadvantages of our creation. Why is this best solution than existing.
-3. File manager - lookup tables, access a disk, counters etc.,
-4. Create a file with n pages or some mb's. 
+1. How much does modern database systems(opensource) -mysql or postgres depend on File Systems of OS?
+2. What should be the requirements from a file manager towards supporting a dbms?
+3. How many of this requirements are supported by modern database systems?
+4. Understand from physical level to file system - what are the inherent constraints current solutions have?
+5. If we create file system, What are the disadvantages of our creation. Why is this best solution than existing?
+6. **Handling Pages:** When inserting a row into a table, the DBMS checks if the current page has enough free space; if not, it allocates a new page from the free list. But if the row is larger than a single page, how is it handled?
+7. How can we build a **simple file manager** that maintains lookup tables and counters, and can create a file with n pages (or a fixed size like 10 MB), allowing new pages to be added?
 
-HOw much does modern database systems(opensource) -mysql or postgres depend on File Systems of OS?
-What should be the requirements from a file manager towards supporting a dbms.
-How many of this requirements are supported by modern database systems.
-Application -> File System -> logic layer -> physical layer
-
-1. Understand from physical to file system - what are the inherent constraints current solutions have
-
+---
 
 
 ### Previous Questions - 20/08
