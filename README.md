@@ -132,7 +132,7 @@ _____
 * Each process uses a thread that points to the buffer pool page instead of making a copy.  
 * Updates are applied directly to the cached page, with locks ensuring other threads cannot access it simultaneously.  
 
-![Locks](InnoDB/assets/locks.png)
+![Locks](assets/Locks.png)
 
 --- 
 
