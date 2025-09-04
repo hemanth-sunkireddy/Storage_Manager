@@ -18,6 +18,8 @@
 
 ![Demo](assets/25-08/Demo.png)
 
+*When a table is created, no disk pages are allocated initially; pages are created only when rows are inserted.
+
 ### Each Tuple Size
 
 - _First Insert:_ 8192 → 8152 = 40 bytes
@@ -40,11 +42,53 @@
 * Postgres adds **Padding** to each tuple.
 PostgreSQL stores tuples aligned to **MAXALIGN** (usually 8 bytes), so the actual space allocated on the page = next multiple of MAXALIGN.
 
-**Q.** Why 1 length header for each value of text (Variable length datatype)?
+**Q.** Why 1 byte length header for each value of text (Variable length datatype)?
 ## our question: row is larger than a single page, how is it handled?
 ![Toast](assets/25-08/Toast.png)
 
+### Q. When does TOAST occur?
+![Toast Call](assets/25-08/ToastCall.png)
+### Q. Do every table have a Toast Table associated to it?
+No
+![Toast Condition](assets/25-08/ToastCondition.png)
+### Storing Toasted Data
+![Toast Data Store](assets/25-08/ToastData.png)
+
+### Toasted Data Example
+![Toast Data Size](assets/25-08/ToastDataSize.png)
+**Q:** Even after adding ~10KB (>threshold), why data is not toasted?
+**Compression**
+![Compression](assets/25-08/Compression.png)
+
+### Adding Large Tuple with Random values
+![Add Large Tuple](assets/25-08/LargeTupleAddition.png)
+* Size of tuple: 32 * 500 = 16000 bytes
+![fifth Row Addition](assets/25-08/fifthRowOutput.png)
+![Logical Size of Fifth Row](assets/25-08/LogicalSizeOfFifthRow.png)
+![Compression 2](assets/25-08/Compression2.png)
+
+### Adding More than 2KB
+![Add more than 2KB](assets/25-08/SixthRowAddition.png)
+* Size of tuple: 32 * 100000 = 3.2 MB
+* Physical Size: 36 KB
+![Physical size of sixth Row](assets/25-08/PhysicalSizeOfsixthRow.png)
+
+
+
+### Observations
+* When a table is created, no disk pages are allocated initially; pages are created only when rows are inserted.
+* For variable length data structure, `1 byte` length header is storing along with data in the tuple.
+* PostgreSQL stores small values inline; large variable-length values may be TOASTed.
+* TOAST tables are created only for tables with TOAST-able (variable-length) columns.
+* TOAST triggers when a value cannot fit inline after compression; highly compressible data may stay inline.
+* TOAST tables are created only for tables with TOAST-able (variable-length) columns.
+
+### Conclusion
+* When building our storage manager, few points to consider
+    - **Variable-Length Data:** Handle using a mechanism similar to TOAST.
+    - **Compression:** Compression algorithm
 _____
+
 2. How much does modern database systems(opensource) -mysql or postgres depend on File Systems of OS?
 3. What should be the requirements from a file manager towards supporting a dbms?
 4. How many of this requirements are supported by modern database systems?
