@@ -1,18 +1,61 @@
-# Storage Manager 
+# Storage Manager
 
-### Current Questions - 25/08
-1. How much does modern database systems(opensource) -mysql or postgres depend on File Systems of OS?
-2. What should be the requirements from a file manager towards supporting a dbms?
-3. How many of this requirements are supported by modern database systems?
-4. Understand from physical level to file system - what are the inherent constraints current solutions have?
-5. If we create file system, What are the disadvantages of our creation. Why is this best solution than existing?
-6. **Handling Pages:** When inserting a row into a table, the DBMS checks if the current page has enough free space; if not, it allocates a new page from the free list. But if the row is larger than a single page, how is it handled?
+### Questions - 25/08
+
+1. **Handling Pages:** When inserting a row into a table, the DBMS checks if the current page has enough free space; if not, it allocates a new page from the free list. But if the row is larger than a single page, how is it handled?
+
+### Postgres
+
+![Postgres Page](assets/25-08/PostGres_Page.png)
+![Postgres Page Layout](assets/25-08/PostGres_PageLayout.png)
+![Page Layout](assets/25-08/PageLayout.png)
+
+### Page Header Layout
+
+![Page Header Layout](assets/25-08/PageHeaderLayout.png)
+
+### Page Header Data Example
+
+![Demo](assets/25-08/Demo.png)
+
+### Each Tuple Size
+
+- _First Insert:_ 8192 → 8152 = 40 bytes
+- _Second Insert:_ 8152 → 8120 = 32 bytes
+- _Third Insert:_ 8120 → 8080 = 40 bytes
+  ![Tuple Sizes](assets/25-08/TableRowsTupleSizes.png)
+  Q. Int is 4 bytes and name is (1 length header + actual data bytes) ~8 bytes. Then what is remaining 23 bytes?
+  ![Tuple Header Description](assets/25-08/TupleHeaderDescription.png)
+  ![Tuple Header](assets/25-08/TupleHeader.png)
+
+### Inserted Rows tuple details
+
+![Tuple Details](assets/25-08/RowsTupleDetail.png)
+* `lp_len` is actual data size in a tuple.
+- Actual row data stored from `t_hoff` and size of data is `lp_len`. 
+*Ex:* for first row:
+  - `lp_len` - `t_hoff` = 34 - 24 = **10 bytes** ( 4 bytes for int + 6 bytes for TEXT - ("Alice" - 5 bytes + 1 length header) )
+
+**Q:**  _First Tuple:_ 8192 → 8152 = 40 bytes, took 40 bytes. What are extra 6 bytes?
+* Postgres adds **Padding** to each tuple.
+PostgreSQL stores tuples aligned to **MAXALIGN** (usually 8 bytes), so the actual space allocated on the page = next multiple of MAXALIGN.
+
+**Q.** Why 1 length header for each value of text (Variable length datatype)?
+## our question: row is larger than a single page, how is it handled?
+![Toast](assets/25-08/Toast.png)
+
+_____
+2. How much does modern database systems(opensource) -mysql or postgres depend on File Systems of OS?
+3. What should be the requirements from a file manager towards supporting a dbms?
+4. How many of this requirements are supported by modern database systems?
+5. Understand from physical level to file system - what are the inherent constraints current solutions have?
+6. If we create file system, What are the disadvantages of our creation. Why is this best solution than existing?
 7. How can we build a **simple file manager** that maintains lookup tables and counters, and can create a file with n pages (or a fixed size like 10 MB), allowing new pages to be added?
 
 ---
 
-
 ### Previous Questions - 20/08
+
 1. When we run create database, what happens? Some metadata is stored; beyond that is some space allotted to it.
 
 <table>
@@ -44,7 +87,7 @@
   </tr>
 </table>
 
-___
+---
 
 2. When we create a table, what happens, some metadata is stored, and beyond that is some space allotted to it.
 
@@ -69,7 +112,7 @@ ___
   </tr>
 </table>
 
-_____ 
+---
 
 3. When Inserting in a table
 
@@ -94,7 +137,7 @@ _____
   </tr>
 </table>
 
-_____ 
+---
 
 4. How are these pages managed, and how does one access the page?
 
@@ -119,31 +162,31 @@ _____
   </tr>
 </table>
 
-* At every time 6 to 10 pages are writing to the disk - Redo/undo logs + actual page + indexing pages.  
-* No reads from disk when already exists in cache - read from cache, update in cache, then update to disk.
+- At every time 6 to 10 pages are writing to the disk - Redo/undo logs + actual page + indexing pages.
+- No reads from disk when already exists in cache - read from cache, update in cache, then update to disk.
 
 ---
 
 5. How is data inserted into the page? There is an application data structure, and a disk block from disk. Are changes made in the application data structure and copied to the disk block in the main memory buffer, or directly the main memory buffer copy of the disk block modified directly?
 
-* Each process uses a thread that points to the buffer pool page instead of making a copy.  
-* Updates are applied directly to the cached page, with locks ensuring other threads cannot access it simultaneously.  
+- Each process uses a thread that points to the buffer pool page instead of making a copy.
+- Updates are applied directly to the cached page, with locks ensuring other threads cannot access it simultaneously.
 
 ![Locks](assets/Locks.png)
 
---- 
-
-
+---
 
 # Tasks - 18/08
+
 A - whether OS should manage database space or DBMS must manage its chunk of space.  
 ![Database and OS](assets/Database_OS.png)  
 ![Disadvantages of Block Level](assets/Disadvantages_BlockLevel.png)  
-![OS File System](assets/FileSystem_OS.png)  
+![OS File System](assets/FileSystem_OS.png)
 
-B - kernel implementation of page/disk block-oriented file access - page by page.  
-* If DBMS manages its chunk of pages then -  
-    - Data structures are created to store different page types in our **Storage Engine**.  
-    - A buffer pool is built to manage these pages.  
-    - The server requests data from disk through OS file system operations.  
-    - We create files and directories in the disk - We call OS to get the data from this files using file system.  
+B - kernel implementation of page/disk block-oriented file access - page by page.
+
+- If DBMS manages its chunk of pages then -
+  - Data structures are created to store different page types in our **Storage Engine**.
+  - A buffer pool is built to manage these pages.
+  - The server requests data from disk through OS file system operations.
+  - We create files and directories in the disk - We call OS to get the data from this files using file system.
