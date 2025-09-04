@@ -33,8 +33,8 @@
 ### Inserted Rows tuple details
 
 ![Tuple Details](assets/25-08/RowsTupleDetail.png)
-* `lp_len` is actual data size in a tuple.
-- Actual row data stored from `t_hoff` and size of data is `lp_len`. 
+* `lp_len` is actual data size in a tuple (tupleHeader + tupleData).
+- Actual tuple data stored from `t_hoff` and size of data is `lp_len`. 
 *Ex:* for first row:
   - `lp_len` - `t_hoff` = 34 - 24 = **10 bytes** ( 4 bytes for int + 6 bytes for TEXT - ("Alice" - 5 bytes + 1 length header) )
 
@@ -72,6 +72,17 @@ No
 * Size of tuple: 32 * 100000 = 3.2 MB
 * Physical Size: 36 KB
 ![Physical size of sixth Row](assets/25-08/PhysicalSizeOfsixthRow.png)
+**Q.** How 36KB stored?
+![Final Data Storage](assets/25-08/FinalDataStorage.png)
+**Q.** What do that 46 bytes contain for last row? How original row maps to TOAST table?
+  - Tuple Header: 23 bytes
+  - int: 4 bytes
+  - name length header: 1 byte
+  - name datum: 18 bytes
+![Datum](assets/25-08/PointerDatum.png)
+So, in the main table page, only stores pointer datum to the toast table.
+**Q.** How the data stored in Toasted Table?
+Details [here](#storing-toasted-data)
 
 
 
@@ -80,6 +91,7 @@ No
 * For variable length data structure, `1 byte` length header is storing along with data in the tuple.
 * PostgreSQL stores small values inline; large variable-length values may be TOASTed.
 * TOAST tables are created only for tables with TOAST-able (variable-length) columns.
+* Postgres Compress data only when data is greater than threshold.
 * TOAST triggers when a value cannot fit inline after compression; highly compressible data may stay inline.
 * TOAST tables are created only for tables with TOAST-able (variable-length) columns.
 
