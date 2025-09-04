@@ -91,14 +91,10 @@ Details [here](#storing-toasted-data)
 * For variable length data structure, `1 byte` length header is storing along with data in the tuple.
 * PostgreSQL stores small values inline; large variable-length values may be TOASTed.
 * TOAST tables are created only for tables with TOAST-able (variable-length) columns.
-* Postgres Compress data only when data is greater than threshold.
+* **Postgres Compress data only when required. Won't compress for some data types.**
+![Postgres compression Cases](assets/25-08/MinorNoteOnCompression.png)
 * TOAST triggers when a value cannot fit inline after compression; highly compressible data may stay inline.
-* TOAST tables are created only for tables with TOAST-able (variable-length) columns.
 
-### Conclusion
-* When building our storage manager, few points to consider
-    - **Variable-Length Data:** Handle using a mechanism similar to TOAST.
-    - **Compression:** Compression algorithm
 _____
 
 2. How much does modern database systems(opensource) -mysql or postgres depend on File Systems of OS?
