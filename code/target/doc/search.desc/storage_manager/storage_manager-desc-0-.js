@@ -1,1 +1,0 @@
-searchState.loadedDescShard("storage_manager", 0, "")
