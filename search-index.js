@@ -1,4 +1,4 @@
-var searchIndex = new Map(JSON.parse('[["storage_manager",{"t":"H","n":["main"],"q":[[0,"storage_manager"]],"i":"`","f":"{{}b}","D":"`","p":[[1,"unit"]],"r":[],"b":[],"c":"OjAAAAAAAAA=","e":"OjAAAAEAAAAAAAEAEAAAAAAAAQA=","P":[]}]]'));
+var searchIndex = new Map(JSON.parse('[["storage_manager",{"t":"HCSFNNONONNNNN","n":["main","page","PAGE_SIZE","Page","borrow","borrow_mut","data","from","id","into","new","try_from","try_into","type_id"],"q":[[0,"storage_manager"],[2,"storage_manager::page"],[14,"core::result"],[15,"core::any"]],"i":"````j000000000","f":"{{}b}`{{}d}`{f{{f{c}}}{}}{{{f{h}}}{{f{hc}}}{}}{jl}{cc{}}{jn}{{}c{}}{nj}{c{{A`{e}}}{}{}}{{}{{A`{c}}}{}}{fAb}","D":"d","p":[[1,"unit"],[1,"usize"],[1,"reference",null,null,1],[0,"mut"],[5,"Page",2],[1,"array"],[1,"u32"],[6,"Result",14,null,1],[5,"TypeId",15]],"r":[],"b":[],"c":"OjAAAAAAAAA=","e":"OzAAAAEAAAwAAwAAAAcACQAAAAsAAwA=","P":[[4,"T"],[6,""],[7,"T"],[8,""],[9,"U"],[10,""],[11,"U,T"],[12,"U"],[13,""]]}]]'));
 if (typeof exports !== 'undefined') exports.searchIndex = searchIndex;
 else if (window.initSearch) window.initSearch(searchIndex);
-//{"start":39,"fragment_lengths":[190]}
+//{"start":39,"fragment_lengths":[696]}
