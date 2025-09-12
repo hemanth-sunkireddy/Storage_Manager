@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["main"],"mod":["page"]};
+window.SIDEBAR_ITEMS = {"constant":["CATALOG_PATH","MAX_PAGES"],"fn":["main"],"mod":["page"]};
